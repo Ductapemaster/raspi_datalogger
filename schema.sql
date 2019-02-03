@@ -1,7 +1,7 @@
 CREATE TABLE measurement_type(
-    id INT NOT NULL,
-    type TEXT NOT NULL,
-    units TEXT,
+    id INT NOT NULL AUTO_INCREMENT,
+    mtype VARCHAR(32) UNIQUE NOT NULL,
+    units VARCHAR(16),
     PRIMARY KEY (id)
 );
 
