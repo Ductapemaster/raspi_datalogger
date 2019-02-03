@@ -1,14 +1,13 @@
-import secrets
-import MySQLdb
+from MeasurementType import MeasurementType
+from Measurement import Measurement
+from Base import Session
 
-db = MySQLdb.connect("localhost", secrets.sql_username, secrets.sql_password, "datalogger")
-cursor = db.cursor()
+session = Session()
 
-# Get some data
+print("Measurement Types:")
 try:
-    cursor.execute("SELECT * FROM measurement_type")
-    for m_type in cursor.fetchall():
-        print(m_type)
-
+    measurement_types = session.query(MeasurementType).all()
+    for mtype in measurement_types:
+        print(mtype)
 except Exception as e:
     print(e)
