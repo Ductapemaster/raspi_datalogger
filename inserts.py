@@ -1,9 +1,11 @@
 from Base import Base, engine, Session
 from MeasurementType import MeasurementType
+from Measurement import Measurement
 from sqlalchemy import exc
 
 
 def create_schema():
+    # Ensure all classes that extend Base are imported, otherwise this will not create their respective tables
     Base.metadata.create_all(engine)
     print("Schema created\n")
 
