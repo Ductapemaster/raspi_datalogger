@@ -1,12 +1,13 @@
 from Base import Base
-from sqlalchemy import Column, Integer, TIMESTAMP, Float, ForeignKey, text
+from sqlalchemy import Column, Integer, TIMESTAMP, Float, ForeignKey
 
+# TODO: Add default for current timestamp in ts field.  Should be set client-side, but just in case
 
 class Measurement(Base):
 	__tablename__ = 'measurement'
 
 	id = Column(Integer, primary_key=True, nullable=False)
-	ts = Column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+	ts = Column(TIMESTAMP, nullable=False)
 	mtype = Column(Integer, ForeignKey("measurement_type.id"), nullable=False)
 	data = Column(Float, nullable=False)
 

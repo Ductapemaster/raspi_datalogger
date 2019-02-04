@@ -13,7 +13,7 @@ INSERT INTO measurement_type values(4, "CO2", "ppm");
 
 CREATE TABLE measurement (
     id INT NOT NULL AUTO_INCREMENT,
-    ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    ts TIMESTAMP,
     mtype INT NOT NULL,
     data FLOAT NOT NULL,
     PRIMARY KEY (id),
