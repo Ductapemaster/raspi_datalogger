@@ -11,3 +11,11 @@ try:
         print(mtype)
 except Exception as e:
     print(e)
+
+print("Measurements:")
+try:
+    measurements = session.query(Measurement).all()
+    for m in measurements:
+        print(m)
+except Exception as e:
+    print(e)
