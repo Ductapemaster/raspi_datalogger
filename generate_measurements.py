@@ -1,19 +1,37 @@
-from Measurement import Measurement
-from MeasurementType import MeasurementType
-from Base import Session, Base, engine
 from time import sleep
-from datetime import datetime
 from random import randint, random
+import paho.mqtt.client as mqtt
+import signal
+import sys
+import settings
 
-Base.metadata.create_all(engine)
+# Set up MQTT client and subscribe to topics
+client = mqtt.Client("Generator")
+client.connect(settings.mqtt_broker_ip)
+
+
+# Set up a ctrl-C catcher
+def signal_handler(sig, frame):
+    print('SIGINT')
+
+    try:
+        print("Stopping MQTT client")
+        client.loop_stop()
+    except Exception as e:
+        print(e)
+
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, signal_handler)
+
 
 while(True):
-    session = Session()
-    m = Measurement(ts=datetime.now(), mtype=randint(1, 4), data=random() * 100.)
-    print("Adding measurement {}".format(m))
-    session.add(m)
+    def on_log(client, userdata, level, buf):
+        print("log: ", buf)
 
-    session.commit()
-    session.close()
+    client.on_log = on_log
+
+    client.publish(settings.topics[randint(0, 3)], str(random() * 100.))
 
     sleep(0.5)
