@@ -17,6 +17,7 @@ def signal_handler(sig, frame):
     try:
         print("Stopping MQTT client")
         client.loop_stop()
+        client.disconnect()
     except Exception as e:
         print(e)
 
@@ -27,11 +28,5 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 while(True):
-    def on_log(client, userdata, level, buf):
-        print("log: ", buf)
-
-    client.on_log = on_log
-
     client.publish(settings.topics[randint(0, 3)], str(random() * 100.))
-
     sleep(0.5)
