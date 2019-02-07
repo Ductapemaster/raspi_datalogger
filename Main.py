@@ -79,10 +79,6 @@ def start_flask():
     def main():
         return "Hello!"
 
-    flask_thread = threading.Thread(target=app.run)
-    flask_thread.setDaemon(True)
-    flask_thread.start()
-
     @app.route("/get_temperature")
     def get_temperature():
         s = Session()
@@ -129,6 +125,13 @@ def start_flask():
     @app.route("/temperature")
     def temperature():
         return render_template("temperature.html")
+
+    def run():
+        app.run(host="0.0.0.0", debug=False)
+
+    flask_thread = threading.Thread(target=run)
+    flask_thread.setDaemon(True)
+    flask_thread.start()
 
 
 
