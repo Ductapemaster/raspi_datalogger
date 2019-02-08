@@ -81,9 +81,25 @@ def start_flask():
 
     @app.route("/get_temperature")
     def get_temperature():
-        s = Session()
-        measurements = s.query(Measurement).filter(Measurement.mtype == 1)
-        values = []
+        return get_measurements(1)
+
+    @app.route("/get_humidity")
+    def get_humidity():
+        return get_measurements(2)
+
+    @app.route("/get_pressure")
+    def get_pressure():
+        return get_measurements(3)
+
+    def get_measurements(measurement_type):
+        try:
+            s = Session()
+            measurements = s.query(Measurement).filter(Measurement.mtype == measurement_type)
+            mtype = s.query(MeasurementType).filter(MeasurementType.id == measurement_type).first()
+            s.close()
+        except Exception as e:
+            print("SQL fetch error: {}".format(e))
+            measurements = []
 
         data = {
             'cols': [{
@@ -91,11 +107,11 @@ def start_flask():
                 'label': 'Timestamp',
                 'type': 'date',
             },
-            {
-                'id': 'Temperature',
-                'label': 'Temperature',
-                'type': 'number',
-            }],
+                {
+                    'id': mtype.mtype,
+                    'label': "{} ({})".format(mtype.mtype, mtype.units),
+                    'type': 'number',
+                }],
             'rows': [],
         }
 
@@ -121,10 +137,29 @@ def start_flask():
         json_data = json.dumps(data)
         return json_data
 
-
     @app.route("/temperature")
     def temperature():
-        return render_template("temperature.html")
+        return render_template("graph_base.html",
+                               title="Temperature Plot",
+                               content_title="Temperature Plot",
+                               data_url="get_temperature"
+                               )
+
+    @app.route("/humidity")
+    def humidity():
+        return render_template("graph_base.html",
+                               title="Humidity Plot",
+                               content_title="Humidity Plot",
+                               data_url="get_humidity"
+                               )
+
+    @app.route("/pressure")
+    def pressure():
+        return render_template("graph_base.html",
+                               title="Pressure Plot",
+                               content_title="Pressure Plot",
+                               data_url="get_pressure"
+                               )
 
     def run():
         app.run(host="0.0.0.0", debug=False)
