@@ -91,6 +91,10 @@ def start_flask():
     def get_pressure():
         return get_measurements(3)
 
+    @app.route("/get_co2")
+    def get_co2():
+        return get_measurements(4)
+
     def get_measurements(measurement_type):
         try:
             s = Session()
@@ -159,6 +163,14 @@ def start_flask():
                                title="Pressure Plot",
                                content_title="Pressure Plot",
                                data_url="get_pressure"
+                               )
+
+    @app.route("/co2")
+    def co2():
+        return render_template("graph_base.html",
+                               title="CO2 Plot",
+                               content_title="CO2 Plot",
+                               data_url="get_co2"
                                )
 
     def run():
