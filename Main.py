@@ -77,7 +77,31 @@ def start_flask():
 
     @app.route("/")
     def main():
-        return "Hello!"
+        return render_template("graph_base.html",
+                               title="Plots",
+                               plots=[
+                                   {
+                                       'id': 1,
+                                       'content_title': "Temperature",
+                                       'data_url': "get_temperature"
+                                   },
+                                   {
+                                       'id': 2,
+                                       'content_title': "Humidity",
+                                       'data_url': "get_humidity"
+                                   },
+                                   {
+                                       'id': 3,
+                                       'content_title': "Pressure",
+                                       'data_url': "get_pressure"
+                                   },
+                                   {
+                                       'id': 4,
+                                       'content_title': "CO2",
+                                       'data_url': "get_co2"
+                                   }
+                               ]
+                               )
 
     @app.route("/get_temperature")
     def get_temperature():
@@ -140,38 +164,6 @@ def start_flask():
 
         json_data = json.dumps(data)
         return json_data
-
-    @app.route("/temperature")
-    def temperature():
-        return render_template("graph_base.html",
-                               title="Temperature Plot",
-                               content_title="Temperature Plot",
-                               data_url="get_temperature"
-                               )
-
-    @app.route("/humidity")
-    def humidity():
-        return render_template("graph_base.html",
-                               title="Humidity Plot",
-                               content_title="Humidity Plot",
-                               data_url="get_humidity"
-                               )
-
-    @app.route("/pressure")
-    def pressure():
-        return render_template("graph_base.html",
-                               title="Pressure Plot",
-                               content_title="Pressure Plot",
-                               data_url="get_pressure"
-                               )
-
-    @app.route("/co2")
-    def co2():
-        return render_template("graph_base.html",
-                               title="CO2 Plot",
-                               content_title="CO2 Plot",
-                               data_url="get_co2"
-                               )
 
     def run():
         app.run(host="0.0.0.0", debug=False)

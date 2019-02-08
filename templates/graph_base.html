@@ -11,30 +11,37 @@
             google.charts.setOnLoadCallback(drawChart);
 
             function drawChart() {
-                var jsonData = $.ajax({
-                    url: "{{ data_url }}",
+                {% for plot in plots %}
+                var jsonData_{{ plot.id }} = $.ajax({
+                    url: "{{ plot.data_url }}",
                     dataType: "json",
                     async: false
                 }).responseText;
 
                 // Create our data table out of JSON data loaded from server.
-                var data = new google.visualization.DataTable(jsonData);
+                var data_{{ plot.id }} = new google.visualization.DataTable(jsonData_{{ plot.id }});
 
-                var chart = new google.visualization.LineChart(document.getElementById('chart'));
+                var chart_{{ plot.id }} = new google.visualization.LineChart(document.getElementById('chart_{{ plot.id }}'));
 
                 var options = {
                     lineWidth: 0,
                     pointSize: 3,
                 };
 
-                chart.draw(data, options);
+                chart_{{ plot.id }}.draw(data_{{ plot.id }}, options);
+                {% endfor %}
             }
         </script>
         {% block header %}{% endblock %}
     </header>
-    <h1>{{ content_title }}</h1>
+
 </section>
 
 <body>
-    <div id="chart" style="width: 1200px; height: 600px"></div>
+<center>
+    {% for plot in plots %}
+    <h1>{{ plot.content_title }}</h1>
+    <div id="chart_{{ plot.id }}" style="width: 1000px; height: 500px"></div>
+    {% endfor %}
+</center>
 </body>
