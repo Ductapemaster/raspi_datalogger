@@ -40,7 +40,7 @@
                     width:      600,
                     height:     300,
                     legend:     'none',
-
+                    chartArea: {'width': '100%', 'height': '80%'},
                 };
 
                 chart_{{ plot.id }}.draw(data_{{ plot.id }}, options);
@@ -54,20 +54,25 @@
 
 <body>
 
+<nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Sensor Dashboard</a>
+</nav>
+
 <center>
-    <h1>Sensor Dashboard</h1>
-    <table class="columns">
-        <tr>
-            <td><div id="chart_1" style="border: 1px solid #ccc"></div></td>
-            <td><div id="chart_2" style="border: 1px solid #ccc"></div></td>
-        </tr>
-        <tr>
-            <td><div id="chart_3" style="border: 1px solid #ccc"></div></td>
-            <td><div id="chart_4" style="border: 1px solid #ccc"></div></td>
-      </tr>
-    </table>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm" style="padding: 20px"><div id="chart_1"></div></div>
+            <div class="col-sm" style="padding: 20px"><div id="chart_2"></div></div>
+        </div>
+        <div class="row">
+            <div class="col-sm" style="padding: 20px"><div id="chart_3"></div></div>
+            <div class="col-sm" style="padding: 20px"><div id="chart_4"></div></div>
+        </div>
+    </div>
 </center>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
 </body>
 </html>
