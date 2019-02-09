@@ -4,7 +4,7 @@ from Base import Session
 from datetime import datetime
 import paho.mqtt.client as mqtt
 import settings
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import threading
 import json
 
@@ -83,47 +83,35 @@ def start_flask():
                                    {
                                        'id': 1,
                                        'content_title': "Temperature",
-                                       'data_url': "get_temperature"
+                                       'measurement_type': "Temperature"
                                    },
                                    {
                                        'id': 2,
                                        'content_title': "Humidity",
-                                       'data_url': "get_humidity"
+                                       'measurement_type': "Humidity"
                                    },
                                    {
                                        'id': 3,
                                        'content_title': "Pressure",
-                                       'data_url': "get_pressure"
+                                       'measurement_type': "Pressure"
                                    },
                                    {
                                        'id': 4,
                                        'content_title': "CO2",
-                                       'data_url': "get_co2"
+                                       'measurement_type': "CO2"
                                    }
                                ]
                                )
 
-    @app.route("/get_temperature")
-    def get_temperature():
-        return get_measurements(1)
+    @app.route("/data")
+    def data():
+        mtype = str(request.args.get('type'))
+        print(mtype)
 
-    @app.route("/get_humidity")
-    def get_humidity():
-        return get_measurements(2)
-
-    @app.route("/get_pressure")
-    def get_pressure():
-        return get_measurements(3)
-
-    @app.route("/get_co2")
-    def get_co2():
-        return get_measurements(4)
-
-    def get_measurements(measurement_type):
         try:
             s = Session()
-            measurements = s.query(Measurement).filter(Measurement.mtype == measurement_type)
-            mtype = s.query(MeasurementType).filter(MeasurementType.id == measurement_type).first()
+            measurements = s.query(Measurement).join(MeasurementType).filter(MeasurementType.mtype.ilike(mtype))
+            mtype = s.query(MeasurementType).filter(MeasurementType.mtype.ilike(mtype)).first()
             s.close()
         except Exception as e:
             print("SQL fetch error: {}".format(e))
@@ -182,7 +170,7 @@ if __name__ == "__main__":
     # SQL Session
     session = Session()
 
-    client = mqtt.Client("SQL Logger")
+    client = mqtt.Client("SQL Logger Test")
     if configure_mqtt_client(client, settings.mqtt_broker_ip):
         client.loop_start()
         print("MQTT loop started")

@@ -13,7 +13,7 @@
             function drawChart() {
                 {% for plot in plots %}
                 var jsonData_{{ plot.id }} = $.ajax({
-                    url: "{{ plot.data_url }}",
+                    url: "data?type={{ plot.measurement_type }}",
                     dataType: "json",
                     async: false
                 }).responseText;
