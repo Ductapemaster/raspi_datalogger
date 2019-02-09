@@ -10,13 +10,17 @@
             // Set a callback to run when the Google Visualization API is loaded.
             google.charts.setOnLoadCallback(drawChart);
 
-            function drawChart() {
-                {% for plot in plots %}
-                var jsonData_{{ plot.id }} = $.ajax({
-                    url: "data?type={{ plot.measurement_type }}",
+            function query_chart_data(measurement_type){
+                return $.ajax({
+                    url: "data?type=" + measurement_type,
                     dataType: "json",
                     async: false
                 }).responseText;
+            }
+
+            function drawChart() {
+                {% for plot in plots %}
+                var jsonData_{{ plot.id }} = query_chart_data("{{ plot.measurement_type }}");
 
                 // Create our data table out of JSON data loaded from server.
                 var data_{{ plot.id }} = new google.visualization.DataTable(jsonData_{{ plot.id }});
@@ -24,8 +28,12 @@
                 var chart_{{ plot.id }} = new google.visualization.LineChart(document.getElementById('chart_{{ plot.id }}'));
 
                 var options = {
-                    lineWidth: 0,
-                    pointSize: 3,
+                    title:      '{{ plot.content_title }}',
+                    lineWidth:  0,
+                    pointSize:  3,
+                    width:      600,
+                    height:     300,
+                    legend:     'none',
                 };
 
                 chart_{{ plot.id }}.draw(data_{{ plot.id }}, options);
@@ -38,10 +46,18 @@
 </section>
 
 <body>
+
 <center>
-    {% for plot in plots %}
-    <h1>{{ plot.content_title }}</h1>
-    <div id="chart_{{ plot.id }}" style="width: 1000px; height: 500px"></div>
-    {% endfor %}
+    <h1>Sensor Dashboard</h1>
+    <table class="columns">
+        <tr>
+            <td><div id="chart_1" style="border: 1px solid #ccc"></div></td>
+            <td><div id="chart_2" style="border: 1px solid #ccc"></div></td>
+        </tr>
+        <tr>
+            <td><div id="chart_3" style="border: 1px solid #ccc"></div></td>
+            <td><div id="chart_4" style="border: 1px solid #ccc"></div></td>
+      </tr>
+    </table>
 </center>
 </body>
