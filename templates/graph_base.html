@@ -26,12 +26,12 @@
 
             function drawChart() {
                 {% for plot in plots %}
-                var jsonData_{{ plot.id }} = query_chart_data("{{ plot.measurement_type }}");
+                var jsonData_{{ plot.measurement_type }} = query_chart_data("{{ plot.measurement_type }}");
 
                 // Create our data table out of JSON data loaded from server.
-                var data_{{ plot.id }} = new google.visualization.DataTable(jsonData_{{ plot.id }});
+                var data_{{ plot.measurement_type }} = new google.visualization.DataTable(jsonData_{{ plot.measurement_type }});
 
-                var chart_{{ plot.id }} = new google.visualization.LineChart(document.getElementById('chart_{{ plot.id }}'));
+                var chart_{{ plot.measurement_type }} = new google.visualization.LineChart(document.getElementById('chart_{{ plot.measurement_type }}'));
 
                 var options = {
                     title:      '{{ plot.content_title }}',
@@ -40,10 +40,10 @@
                     width:      600,
                     height:     300,
                     legend:     'none',
-                    chartArea: {'width': '100%', 'height': '80%'},
+                    chartArea: {'width': '80%', 'height': '80%'},
                 };
 
-                chart_{{ plot.id }}.draw(data_{{ plot.id }}, options);
+                chart_{{ plot.measurement_type }}.draw(data_{{ plot.measurement_type }}, options);
                 {% endfor %}
             }
         </script>
@@ -61,12 +61,12 @@
 <center>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm" style="padding: 20px"><div id="chart_1"></div></div>
-            <div class="col-sm" style="padding: 20px"><div id="chart_2"></div></div>
+            <div class="col-sm" style="padding-top: 20px"><div id="chart_temperature"></div></div>
+            <div class="col-sm" style="padding-top: 20px"><div id="chart_humidity"></div></div>
         </div>
         <div class="row">
-            <div class="col-sm" style="padding: 20px"><div id="chart_3"></div></div>
-            <div class="col-sm" style="padding: 20px"><div id="chart_4"></div></div>
+            <div class="col-sm" style="padding-top: 20px"><div id="chart_pressure"></div></div>
+            <div class="col-sm" style="padding-top: 20px"><div id="chart_co2"></div></div>
         </div>
     </div>
 </center>
