@@ -161,7 +161,6 @@ def start_flask():
     flask_thread.start()
 
 
-
 if __name__ == "__main__":
     import signal
     import sys
@@ -170,7 +169,7 @@ if __name__ == "__main__":
     # SQL Session
     session = Session()
 
-    client = mqtt.Client("SQL Logger Test")
+    client = mqtt.Client(settings.mqtt_client_name)
     if configure_mqtt_client(client, settings.mqtt_broker_ip):
         client.loop_start()
         print("MQTT loop started")

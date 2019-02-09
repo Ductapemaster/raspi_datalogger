@@ -1,4 +1,5 @@
 mqtt_broker_ip = "192.168.0.110"
+mqtt_client_name = "SQL Logger"
 
 topics = [
         "apt/temperature",
