@@ -16,25 +16,21 @@
             // Set a callback to run when the Google Visualization API is loaded.
             google.charts.setOnLoadCallback(drawChart);
 
-            function query_chart_data(measurement_type){
+            function create_chart(measurement_type, chartElementId, options){
                 return $.ajax({
                     url: "data?type=" + measurement_type,
                     dataType: "json",
-                    async: false
+                    success: function(json) {
+                        var data = new google.visualization.DataTable(json);
+                        var chart =  new google.visualization.LineChart(document.getElementById(chartElementId));
+                        chart.draw(data, options);
+                    }
                 }).responseText;
             }
 
             function drawChart() {
-                {% for plot in plots %}
-                var jsonData_{{ plot.measurement_type }} = query_chart_data("{{ plot.measurement_type }}");
-
-                // Create our data table out of JSON data loaded from server.
-                var data_{{ plot.measurement_type }} = new google.visualization.DataTable(jsonData_{{ plot.measurement_type }});
-
-                var chart_{{ plot.measurement_type }} = new google.visualization.LineChart(document.getElementById('chart_{{ plot.measurement_type }}'));
-
-                var options = {
-                    title:      '{{ plot.content_title }}',
+                options = {
+                    title:      '',
                     lineWidth:  0,
                     pointSize:  3,
                     width:      600,
@@ -43,7 +39,11 @@
                     chartArea: {'width': '80%', 'height': '80%'},
                 };
 
-                chart_{{ plot.measurement_type }}.draw(data_{{ plot.measurement_type }}, options);
+                {% for plot in plots %}
+                options['title'] = '{{ plot.content_title }}';
+                create_chart('{{ plot.measurement_type }}',
+                             'chart_{{ plot.measurement_type }}',
+                             options);
                 {% endfor %}
             }
         </script>
