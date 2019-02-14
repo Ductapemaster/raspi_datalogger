@@ -16,9 +16,9 @@
             // Set a callback to run when the Google Visualization API is loaded.
             google.charts.setOnLoadCallback(drawChart);
 
-            function create_chart(measurement_type, chartElementId, options){
+            function create_chart(measurement_type, chartElementId, options, start, end){
                 return $.ajax({
-                    url: "data?type=" + measurement_type,
+                    url: "data?type=" + measurement_type + '&start=' + start + '&end=' + end,
                     dataType: "json",
                     success: function(json) {
                         var data = new google.visualization.DataTable(json);
@@ -38,12 +38,30 @@
                     legend:     'none',
                     chartArea: {'width': '80%', 'height': '80%'},
                 };
+                d = new Date();
+                start = new Date(d.getFullYear(),
+                                 d.getMonth(),
+                                 d.getDate(),
+                                 0,
+                                 0,
+                                 0,
+                                 0);
+
+                end = new Date(d.getFullYear(),
+                                 d.getMonth(),
+                                 d.getDate(),
+                                 23,
+                                 59,
+                                 59,
+                                 999);
 
                 {% for plot in plots %}
                 options['title'] = '{{ plot.content_title }}';
                 create_chart('{{ plot.measurement_type }}',
                              'chart_{{ plot.measurement_type }}',
-                             options);
+                             options,
+                             start.getTime(),
+                             end.getTime());
                 {% endfor %}
             }
         </script>

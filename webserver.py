@@ -3,6 +3,7 @@ from Base import Session
 from MeasurementType import MeasurementType
 from Measurement import Measurement
 import json
+from datetime import datetime
 import threading
 
 # Flask setup
@@ -40,10 +41,13 @@ def main():
 @app.route("/data")
 def data():
     mtype = str(request.args.get('type'))
+    start = datetime.fromtimestamp(int(request.args.get('start')) / 1000.)
+    end = datetime.fromtimestamp(int(request.args.get('end')) / 1000.)
+    print("Start time: {}\nEnd time:   {}".format(start, end))
 
     try:
         s = Session()
-        measurements = s.query(Measurement).join(MeasurementType).filter(MeasurementType.mtype.ilike(mtype))
+        measurements = s.query(Measurement).join(MeasurementType).filter(MeasurementType.mtype.ilike(mtype)).filter(Measurement.ts.between(start, end))
         mtype = s.query(MeasurementType).filter(MeasurementType.mtype.ilike(mtype)).first()
         s.close()
     except Exception as e:
