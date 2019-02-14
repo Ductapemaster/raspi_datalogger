@@ -67,7 +67,7 @@ def data():
     for m in measurements:
         time_str = "Date({},{},{},{},{},{},{})".format(
             m.ts.year,
-            m.ts.month,
+            m.ts.month - 1,
             m.ts.day,
             m.ts.hour,
             m.ts.minute,
