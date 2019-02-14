@@ -43,7 +43,6 @@ def data():
     mtype = str(request.args.get('type'))
     start = datetime.fromtimestamp(int(request.args.get('start')) / 1000.)
     end = datetime.fromtimestamp(int(request.args.get('end')) / 1000.)
-    print("Start time: {}\nEnd time:   {}".format(start, end))
 
     try:
         s = Session()
