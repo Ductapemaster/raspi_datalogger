@@ -38,22 +38,9 @@
             }
 
             function drawChart() {
-                d = new Date();
-                start = new Date(d.getFullYear(),
-                                 d.getMonth(),
-                                 d.getDate(),
-                                 0,
-                                 0,
-                                 0,
-                                 0);
-
-                end = new Date(d.getFullYear(),
-                                 d.getMonth(),
-                                 d.getDate(),
-                                 23,
-                                 59,
-                                 59,
-                                 999);
+                start = new Date();
+                end = new Date(start.getTime());
+                end.setDate(end.getDate() - 1);
 
                 {% for plot in plots %}
                 create_chart('{{ plot.measurement_type }}',
