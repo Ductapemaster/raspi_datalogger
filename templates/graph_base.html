@@ -38,9 +38,9 @@
             }
 
             function drawChart() {
-                start = new Date();
-                end = new Date(start.getTime());
-                end.setDate(end.getDate() - 1);
+                end = new Date();
+                start = new Date(end.getTime());
+                start.setDate(start.getDate() - 1);
 
                 {% for plot in plots %}
                 create_chart('{{ plot.measurement_type }}',
