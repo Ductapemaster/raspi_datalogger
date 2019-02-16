@@ -7,3 +7,5 @@ topics = [
         "apt/pressure",
         "apt/co2",
     ]
+
+influx_database_name = "indoor_monitoring"

@@ -4,6 +4,16 @@ from Base import Session
 from datetime import datetime
 import paho.mqtt.client as mqtt
 import settings
+import secrets
+from influxdb import InfluxDBClient
+
+
+influx_client = InfluxDBClient(secrets.influx_database_server,
+                               secrets.influx_database_port,
+                               secrets.influx_username,
+                               secrets.influx_password,
+                               database=settings.influx_database_name)
+
 
 
 def print_all():
@@ -31,20 +41,41 @@ def print_all():
 # Handler for subscribed messages
 def on_message(client, userdata, message):
 
+    t = datetime.now()
+
     try:
         msg_session = Session()
-        ts = datetime.now()
+        ts = t
         mtype = settings.topics.index(message.topic) + 1
         data = float(message.payload)
     except Exception as e:
         print(e)
-        return
 
     m = Measurement(ts=ts, mtype=mtype, data=data)
     print("Adding measurement {}".format(m))
     msg_session.add(m)
     msg_session.commit()
     msg_session.close()
+
+    try:
+        json_body = [
+            {
+                "measurement": message.topic.split('/')[-1],
+                "tags": {
+                    "location": "bedroom",
+                    "device": "photon_prototype",
+                },
+                "time": t.isoformat(),
+                "fields": {
+                    "value": data
+                }
+            }
+        ]
+
+        influx_client.write_points(json_body)
+    except Exception as e:
+        print(e)
+
 
 
 def configure_mqtt_client(mqtt_client, broker_ip):

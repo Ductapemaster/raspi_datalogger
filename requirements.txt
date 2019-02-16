@@ -2,3 +2,4 @@ SQLAlchemy
 mysqlclient
 paho-mqtt
 Flask
+influxdb
