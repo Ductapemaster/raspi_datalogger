@@ -3,8 +3,16 @@ from Base import Session
 from MeasurementType import MeasurementType
 from Measurement import Measurement
 import json
-from datetime import datetime
-import threading
+from datetime import datetime, timedelta
+from influxdb import InfluxDBClient
+import secrets
+import settings
+
+influx_client = InfluxDBClient(secrets.influx_database_server,
+                               secrets.influx_database_port,
+                               secrets.influx_username,
+                               secrets.influx_password,
+                               database=settings.influx_database_name)
 
 # Flask setup
 app = Flask(__name__)
@@ -41,16 +49,15 @@ def main():
 @app.route("/data")
 def data():
     mtype = str(request.args.get('type'))
-    start = datetime.fromtimestamp(int(request.args.get('start')) / 1000.)
-    end = datetime.fromtimestamp(int(request.args.get('end')) / 1000.)
+    start_utc = datetime.fromtimestamp(int(request.args.get('start')) / 1000.)# + timedelta(hours=settings.timezone_offset)
+    end_utc = datetime.fromtimestamp(int(request.args.get('end')) / 1000.)# + timedelta(hours=settings.timezone_offset)
 
     try:
-        s = Session()
-        measurements = s.query(Measurement).join(MeasurementType).filter(MeasurementType.mtype.ilike(mtype)).filter(Measurement.ts.between(start, end))
-        mtype = s.query(MeasurementType).filter(MeasurementType.mtype.ilike(mtype)).first()
-        s.close()
+        query = "SELECT value FROM {} WHERE time >= \'{}\' AND time <= \'{}\';".format(mtype, start_utc, end_utc)
+        print(query)
+        measurements = influx_client.query(query, epoch='u')
     except Exception as e:
-        print("SQL fetch error: {}".format(e))
+        print("Influx fetch error: {}".format(e))
         measurements = []
 
     json_data = {
@@ -60,27 +67,28 @@ def data():
             'type': 'date',
         },
             {
-                'id': mtype.mtype,
-                'label': "{} ({})".format(mtype.mtype, mtype.units),
+                'id': mtype,
+                'label': "{} ({})".format(mtype, settings.units[mtype] if mtype in settings.units.keys() else "unitless"),
                 'type': 'number',
             }],
         'rows': [],
     }
 
-    for m in measurements:
+    for m in measurements.get_points():
+        ts = datetime.fromtimestamp(m['time'] / 1000000)
         time_str = "Date({},{},{},{},{},{},{})".format(
-            m.ts.year,
-            m.ts.month - 1,
-            m.ts.day,
-            m.ts.hour,
-            m.ts.minute,
-            m.ts.second,
-            int(m.ts.microsecond / 1000.),
+            ts.year,
+            ts.month - 1,
+            ts.day,
+            ts.hour,
+            ts.minute,
+            ts.second,
+            int(ts.microsecond / 1000.),
         )
         row = {
             'c': [
                 {'v': time_str},
-                {'v': m.data},
+                {'v': m['value']},
             ]
         }
 

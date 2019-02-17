@@ -44,26 +44,17 @@ def on_message(client, userdata, message):
     t = datetime.now()
 
     try:
-        msg_session = Session()
-        ts = t
-        mtype = settings.topics.index(message.topic) + 1
         data = float(message.payload)
-    except Exception as e:
-        print(e)
+        measurement_type = message.topic.split('/')[-1]
+        units = settings.units[measurement_type]
 
-    m = Measurement(ts=ts, mtype=mtype, data=data)
-    print("Adding measurement {}".format(m))
-    msg_session.add(m)
-    msg_session.commit()
-    msg_session.close()
-
-    try:
         json_body = [
             {
-                "measurement": message.topic.split('/')[-1],
+                "measurement": measurement_type,
                 "tags": {
                     "location": "bedroom",
                     "device": "photon_prototype",
+                    "units": units
                 },
                 "time": t.isoformat(),
                 "fields": {
@@ -75,7 +66,6 @@ def on_message(client, userdata, message):
         influx_client.write_points(json_body)
     except Exception as e:
         print(e)
-
 
 
 def configure_mqtt_client(mqtt_client, broker_ip):
