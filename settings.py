@@ -11,3 +11,5 @@ units = {
 }
 
 influx_database_name = "indoor_monitoring"
+timezone_offset = -8
+

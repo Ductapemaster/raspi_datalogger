@@ -49,8 +49,8 @@ def main():
 @app.route("/data")
 def data():
     mtype = str(request.args.get('type'))
-    start_utc = datetime.fromtimestamp(int(request.args.get('start')) / 1000.)# + timedelta(hours=settings.timezone_offset)
-    end_utc = datetime.fromtimestamp(int(request.args.get('end')) / 1000.)# + timedelta(hours=settings.timezone_offset)
+    start_utc = datetime.fromtimestamp(int(request.args.get('start')) / 1000.) + timedelta(hours=settings.timezone_offset)
+    end_utc = datetime.fromtimestamp(int(request.args.get('end')) / 1000.) + timedelta(hours=settings.timezone_offset)
 
     try:
         query = "SELECT value FROM {} WHERE time >= \'{}\' AND time <= \'{}\';".format(mtype, start_utc, end_utc)
