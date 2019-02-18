@@ -41,13 +41,13 @@ def print_all():
 # Handler for subscribed messages
 def on_message(client, userdata, message):
 
-    t = datetime.now()
-
     try:
         data = float(message.payload)
         measurement_type = message.topic.split('/')[-1]
         units = settings.units[measurement_type]
 
+        # Measurements are tagged with server time when received
+        # TODO: Consider more accurate timekeeping methods
         json_body = [
             {
                 "measurement": measurement_type,
@@ -56,7 +56,6 @@ def on_message(client, userdata, message):
                     "device": "photon_prototype",
                     "units": units
                 },
-                "time": t.isoformat(),
                 "fields": {
                     "value": data
                 }
