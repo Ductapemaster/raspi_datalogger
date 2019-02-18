@@ -79,9 +79,12 @@ def configure_mqtt_client(mqtt_client, broker_ip):
         return False
 
     # Subscribe to our database topics
-    for topic in settings.topics:
-        if mqtt_client.subscribe(topic)[0] == 0:
-            print("Subscribed to topic \'{}\'".format(topic))
+    topics = "{}/#".format(settings.mqtt_prefix)
+    reply = mqtt_client.subscribe(topics)
+    if reply[0] == 0:
+        print("Subscribed to topics \'{}\'".format(topics))
+    else:
+        print(reply)
 
     mqtt_client.on_message = on_message
 
