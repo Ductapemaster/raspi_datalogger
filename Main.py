@@ -62,7 +62,11 @@ def on_message(client, userdata, message):
             }
         ]
 
-        influx_client.write_points(json_body)
+        write_response = influx_client.write_points(json_body)
+        if write_response:
+            print("Added measurement: {}".format(json_body))
+        else:
+            print("Write failed")
     except Exception as e:
         print(e)
 
