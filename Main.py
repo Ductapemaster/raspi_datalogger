@@ -1,7 +1,3 @@
-from MeasurementType import MeasurementType
-from Measurement import Measurement
-from Base import Session
-from datetime import datetime
 import paho.mqtt.client as mqtt
 import settings
 import secrets
@@ -13,29 +9,6 @@ influx_client = InfluxDBClient(secrets.influx_database_server,
                                secrets.influx_username,
                                secrets.influx_password,
                                database=settings.influx_database_name)
-
-
-
-def print_all():
-    session = Session()
-
-    print("Measurement Types:")
-    try:
-        measurement_types = session.query(MeasurementType).all()
-        for mtype in measurement_types:
-            print(mtype)
-    except Exception as e:
-        print(e)
-
-    print("Measurements:")
-    try:
-        measurements = session.query(Measurement).all()
-        for m in measurements:
-            print(m)
-    except Exception as e:
-        print(e)
-
-    session.close()
 
 
 # Handler for subscribed messages
@@ -99,9 +72,6 @@ if __name__ == "__main__":
     import sys
     from time import sleep
 
-    # SQL Session
-    session = Session()
-
     client = mqtt.Client(settings.mqtt_client_name)
     if configure_mqtt_client(client, settings.mqtt_broker_ip):
         client.loop_start()
@@ -121,8 +91,8 @@ if __name__ == "__main__":
             print(e)
 
         try:
-            print("Closing SQL connection")
-            session.close()
+            print("Closing InfluxDB connection")
+            influx_client.close()
         except Exception as e:
             print(e)
 
