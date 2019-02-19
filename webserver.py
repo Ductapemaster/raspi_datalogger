@@ -23,22 +23,18 @@ def main():
                            title="Plots",
                            plots=[
                                {
-                                   'id': 1,
                                    'content_title': "Temperature (deg C)",
                                    'measurement_type': "temperature"
                                },
                                {
-                                   'id': 2,
                                    'content_title': "Humidity (%)",
                                    'measurement_type': "humidity"
                                },
                                {
-                                   'id': 3,
                                    'content_title': "Pressure (hPa)",
                                    'measurement_type': "pressure"
                                },
                                {
-                                   'id': 4,
                                    'content_title': "CO2 (ppm)",
                                    'measurement_type': "co2"
                                }
