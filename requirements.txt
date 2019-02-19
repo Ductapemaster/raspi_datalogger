@@ -1,3 +1,4 @@
 paho-mqtt
 Flask
+bootstrap-flask
 influxdb

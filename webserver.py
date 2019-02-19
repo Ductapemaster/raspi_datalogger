@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 from flask_bootstrap import Bootstrap
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from influxdb import InfluxDBClient
 import secrets
 import settings
@@ -14,6 +14,8 @@ influx_client = InfluxDBClient(secrets.influx_database_server,
 
 # Flask setup
 app = Flask(__name__)
+Bootstrap(app)
+
 
 @app.route("/")
 def main():

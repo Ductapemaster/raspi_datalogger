@@ -1,82 +1,135 @@
-<!doctype html>
-<html lang="en">
-<title>{{ title }}</title>
-  <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
 
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script type="text/javascript">
-            google.charts.load('current', {'packages':['corechart']});
+{% block head %}
+{{ super() }}
+{% endblock %}
 
-            // Set a callback to run when the Google Visualization API is loaded.
-            google.charts.setOnLoadCallback(drawChart);
+{% block styles %}
+{{super()}}
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+{% endblock %}
 
-            function create_chart(measurement_type, chartElementId, title, start, end){
-                return $.ajax({
-                    url: "data?type=" + measurement_type + '&start=' + start + '&end=' + end,
-                    dataType: "json",
-                    success: function(json) {
-                        var data = new google.visualization.DataTable(json);
-                        var chart =  new google.visualization.LineChart(document.getElementById(chartElementId));
-                        options = {
-                            title:      title,
-                            lineWidth:  0,
-                            pointSize:  3,
-                            width:      600,
-                            height:     300,
-                            legend:     'none',
-                            chartArea: {'width': '80%', 'height': '80%'},
-                        };
-                        chart.draw(data, options);
-                    }
-                }).responseText;
-            }
-
-            function drawChart() {
-                end = new Date();
-                start = new Date(end.getTime());
-                start.setDate(start.getDate() - 1);
-
-                {% for plot in plots %}
-                create_chart('{{ plot.measurement_type }}',
-                             'chart_{{ plot.measurement_type }}',
-                             '{{ plot.content_title }}',
-                             start.getTime(),
-                             end.getTime());
-                {% endfor %}
-            }
-        </script>
-        {% block header %}{% endblock %}
-    </head>
-
-</section>
-
-<body>
-
-<nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Sensor Dashboard</a>
-</nav>
-
-<center>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm" style="padding-top: 20px"><div id="chart_temperature"></div></div>
-            <div class="col-sm" style="padding-top: 20px"><div id="chart_humidity"></div></div>
-        </div>
-        <div class="row">
-            <div class="col-sm" style="padding-top: 20px"><div id="chart_pressure"></div></div>
-            <div class="col-sm" style="padding-top: 20px"><div id="chart_co2"></div></div>
+{% block navbar %}
+    <div class="pos-f-t">
+        <nav class="navbar navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">Sensor Dashboard</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </nav>
+        <div class="collapse" id="navbarToggleExternalContent">
+            <div class="bg-dark p-4 container-fluid">
+                <form class="form-inline" id="data_range">
+                    <label class="mb-2 mr-sm-2 text-white" for="start_date">Data Range</label>
+                    <div class="input-group date mb-2 mr-sm-2" id="start_date" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#start_date"/>
+                        <div class="input-group-append" data-target="#start_date" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                    <div class="mb-2 mr-sm-2">
+                        <span class="text-white">to</span>
+                    </div>
+                    <label class="sr-only" for="end_date">Name</label>
+                    <div class="input-group date mb-2 mr-sm-2" id="end_date" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#end_date"/>
+                        <div class="input-group-append" data-target="#end_date" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                    <label class="sr-only" for="btn_submit">Name</label>
+                    <div class="input-group date mb-2 mr-sm-2" id="btn_submit" data-target-input="nearest">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</center>
+{% endblock %}
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+{% block content %}
+    <center>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm" style="padding-top: 20px"><div id="chart_temperature"></div></div>
+                <div class="col-sm" style="padding-top: 20px"><div id="chart_humidity"></div></div>
+            </div>
+            <div class="row">
+                <div class="col-sm" style="padding-top: 20px"><div id="chart_pressure"></div></div>
+                <div class="col-sm" style="padding-top: 20px"><div id="chart_co2"></div></div>
+            </div>
+        </div>
+    </center>
+{% endblock %}
 
-</body>
-</html>
+{% block scripts %}
+{{ super() }}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawChartCallback);
+
+        function create_chart(measurement_type, chartElementId, title, start, end){
+            return $.ajax({
+                url: "data?type=" + measurement_type + '&start=' + start + '&end=' + end,
+                dataType: "json",
+                success: function(json) {
+                    var data = new google.visualization.DataTable(json);
+                    var chart =  new google.visualization.LineChart(document.getElementById(chartElementId));
+                    options = {
+                        title:      title,
+                        lineWidth:  0,
+                        pointSize:  3,
+                        width:      600,
+                        height:     300,
+                        legend:     'none',
+                        chartArea: {'width': '80%', 'height': '80%'},
+                    };
+                    chart.draw(data, options);
+                }
+            }).responseText;
+        }
+
+        end = new Date();
+        start = new Date(end.getTime());
+        start.setDate(start.getDate() - 1);
+
+        function drawChartCallback() {
+            drawChart(start.getTime(), end.getTime());
+        }
+
+        function drawChart(start_time, end_time) {
+            {% for plot in plots %}
+            create_chart('{{ plot.measurement_type }}',
+                         'chart_{{ plot.measurement_type }}',
+                         '{{ plot.content_title }}',
+                         start_time,
+                         end_time);
+            {% endfor %}
+        }
+
+        window.onload = function(){
+            $('#start_date').datetimepicker();
+            $('#start_date').datetimepicker('date', start);
+
+            $('#end_date').datetimepicker();
+            $('#end_date').datetimepicker('date', end);
+        }
+
+        $('#data_range').submit(function(event){
+            console.log(event);
+            event.preventDefault();
+            console.log($('#start_date').datetimepicker('date').valueOf());
+            console.log($('#end_date').datetimepicker('date').valueOf());
+            drawChart($('#start_date').datetimepicker('date').valueOf(),
+                      $('#end_date').datetimepicker('date').valueOf()
+            )
+        });
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+{% endblock %}

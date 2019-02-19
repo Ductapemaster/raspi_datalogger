@@ -1,0 +1,33 @@
+{# Modified version of template used by flask-bootstrap for Bootstrap 3 #}
+{% block doc -%}
+<!DOCTYPE html>
+<html>
+{%- block html %}
+  <head>
+    {%- block head %}
+    <title>{% block title %}{{title|default}}{% endblock title %}</title>
+
+    {%- block metas %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {%- endblock metas %}
+
+    {%- block styles %}
+    {{ bootstrap.load_css() }}
+    {%- endblock styles %}
+    {%- endblock head %}
+  </head>
+  <body>
+    {% block body -%}
+    {% block navbar %}
+    {%- endblock navbar %}
+    {% block content -%}
+    {%- endblock content %}
+
+    {% block scripts %}
+    {{ bootstrap.load_js() }}
+    {%- endblock scripts %}
+    {%- endblock body %}
+  </body>
+{%- endblock html %}
+</html>
+{% endblock doc -%}
