@@ -49,11 +49,13 @@ def main():
 @app.route("/data")
 def data():
     mtype = str(request.args.get('type'))
-    start_utc = datetime.fromtimestamp(int(request.args.get('start')) / 1000.) + timedelta(hours=settings.timezone_offset)
-    end_utc = datetime.fromtimestamp(int(request.args.get('end')) / 1000.) + timedelta(hours=settings.timezone_offset)
+    start_utc = datetime.fromtimestamp(int(request.args.get('start')) / 1000.)
+    end_utc = datetime.fromtimestamp(int(request.args.get('end')) / 1000.)
 
     try:
-        query = "SELECT value FROM {} WHERE time >= \'{}\' AND time <= \'{}\';".format(mtype, start_utc, end_utc)
+        query = "SELECT value FROM {} \
+                WHERE time >= \'{}\' AND time <= \'{}\' \
+                tz('America/Los_Angeles');".format(mtype, start_utc, end_utc)
         print(query)
         measurements = influx_client.query(query, epoch='u')
     except Exception as e:
