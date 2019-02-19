@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request
-from Base import Session
-from MeasurementType import MeasurementType
-from Measurement import Measurement
+from flask_bootstrap import Bootstrap
 import json
 from datetime import datetime, timedelta
 from influxdb import InfluxDBClient
