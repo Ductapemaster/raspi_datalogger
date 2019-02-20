@@ -1,11 +1,26 @@
-# Installed Software (Raspberry Pi)
+# Architecture
+## Sensor(s)
+Current one sensor developed using a Particle Photon gathers temperature, relative humidity, barometric pressure, and 
+CO<sub>2</sub> from a location in my apartment.
 
-- Python 3.7 [(Guide)](https://www.scivision.co/compile-install-python-beta-raspberry-pi/)
-- NGiNX and PHP 7.0[(Guide)](https://pimylifeup.com/raspberry-pi-nginx/)
-	- Used this command instead of provided for PHP: `sudo apt install php-fpm`
-- PHPmyadmin [Guide](https://pimylifeup.com/raspberry-pi-mysql-phpmyadmin/)
-- MySQL [Guide](http://raspberrywebserver.com/sql-databases/using-mysql-on-a-raspberry-pi.html)
+These values are published to a MQTT broker, each with their own topic.
 
-# Development Environment (OSX)
+## MQTT Broker
+A Raspberry Pi on my local network to acts as an MQTT broker (using mosquitto).
 
-MySQL installation ran into one issue, solved by this: https://stackoverflow.com/questions/6383310/python-mysqldb-library-not-loaded-libmysqlclient-18-dylib
+## Database Bridge
+`Main.py` acts as a bridge to a database by subscribing to the topics published by the sensors. This runs locally on the Pi.
+
+## Database
+A cloud VPS instance is used to handle the database for this project.  Docker is used to manage the Influx instance.
+
+## Webserver
+`webserver.py` runs locally on the Pi to serve a page with graphs.  Eventually this will be migrated to the VPS, but
+but proper authentication will be required.
+
+# To Do
+- [ ] Add additional hierarchy to the MQTT topics (location, sensor type, etc).  Database fields to support exist
+- [ ] Consider splitting repo into MQTT-database bridge and webserver elements
+    - [ ] Set scripts up with Docker for portability
+- [ ] Use Python logging module instead of `print()`
+
